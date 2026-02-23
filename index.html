@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+    <title>Puppy</title>
+    <style>
+      :root {
+        color-scheme: only light;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: radial-gradient(circle at 50% 0%, #1f3750 0%, #121e2e 60%, #0d1420 100%);
+        overflow: hidden;
+      }
+
+      body {
+        display: grid;
+        place-items: center;
+      }
+
+      #game-host {
+        position: relative;
+        width: 100%;
+        max-width: 440px;
+        aspect-ratio: 360 / 640;
+        display: grid;
+        place-items: center;
+      }
+
+      .profile-panel {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: calc(100% - 28px);
+        max-width: 320px;
+        padding: 10px;
+        border-radius: 10px;
+        background: rgba(8, 12, 19, 0.8);
+        border: 1px solid rgba(255, 223, 153, 0.6);
+        color: #fff3d1;
+        font-family: Verdana, sans-serif;
+        z-index: 10;
+      }
+
+      .profile-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .profile-panel input,
+      .profile-panel select {
+        flex: 1;
+        height: 30px;
+        border: 1px solid #9b7d4e;
+        border-radius: 8px;
+        background: #fff8e6;
+        color: #2e2415;
+        font-size: 13px;
+        padding: 0 8px;
+        text-align: center;
+      }
+
+      .profile-panel button {
+        height: 30px;
+        border: 0;
+        border-radius: 8px;
+        background: #ffcf67;
+        color: #2e2415;
+        font-weight: 700;
+        font-size: 12px;
+        padding: 0 10px;
+        cursor: pointer;
+      }
+
+      .profile-hint {
+        margin-top: 6px;
+        font-size: 11px;
+        color: #f7deb2;
+      }
+
+      canvas {
+        display: block;
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 14px;
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.42);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game-host" aria-label="Puppy game">
+      <div id="dog-profile" class="profile-panel">
+        <div class="profile-row">
+          <input id="dog-name" type="text" maxlength="20" value="Puppy" placeholder="Dog name" />
+        </div>
+        <div class="profile-row" style="margin-top: 6px;">
+          <select id="dog-breed">
+            <option>Golden Retriever</option>
+            <option>Labrador</option>
+            <option>Corgi</option>
+            <option>Beagle</option>
+            <option>Shiba Inu</option>
+            <option>Mixed Breed</option>
+          </select>
+          <button id="save-dog-profile" type="button">Apply</button>
+        </div>
+        <div class="profile-hint" style="text-align: center;">Choose your dog profile before starting.</div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
+    <script src="./src/main.js"></script>
+  </body>
+</html>
