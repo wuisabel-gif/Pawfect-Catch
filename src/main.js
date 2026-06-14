@@ -55,6 +55,11 @@ const ITEM_TYPES = [
   { key: "gem", label: "Gem", size: 28, weight: 1, color: 0xc846ff, stroke: 0x6c2194 },
 ];
 
+const DOG_TEXTURES = {
+  "Golden Retriever": "dog_golden",
+  "Shiba Inu": "dog_shiba",
+};
+
 function cloneDefaultData() {
   return JSON.parse(JSON.stringify(DEFAULT_DATA));
 }
@@ -98,6 +103,15 @@ class MiloTreatRushScene extends Phaser.Scene {
     this.magnetMs = 0;
     this.runCoins = 0;
     this.runGems = 0;
+  }
+
+  preload() {
+    this.load.image("bg_day", "asset/background1.png");
+    this.load.image("bg_sunset", "asset/background_sunset.png");
+    this.load.image("bg_night", "asset/background_night.png");
+    this.load.image("dog_golden", "asset/processed/golden_retriever_cutout.png");
+    this.load.image("dog_shiba", "asset/processed/shiba_inu_cutout.png");
+    this.load.image("dog_selection_sheet", "asset/dog selection portrait.png");
   }
 
   create() {
@@ -217,7 +231,15 @@ class MiloTreatRushScene extends Phaser.Scene {
     if (this.debugStatus) this.debugStatus.textContent = mode;
   }
 
-  drawBackyard(target = this.screenRoot) {
+  drawBackyard(target = this.screenRoot, textureKey = "bg_day") {
+    if (this.textures.exists(textureKey)) {
+      const bg = this.add.image(WIDTH / 2, HEIGHT / 2, textureKey);
+      const scale = Math.max(WIDTH / bg.width, HEIGHT / bg.height);
+      bg.setScale(scale);
+      target.add(bg);
+      return;
+    }
+
     const sky = this.add.graphics();
     sky.fillGradientStyle(0x1d8fff, 0x0e7cee, 0x8be7ff, 0xdaf7ff, 1);
     sky.fillRect(0, 0, WIDTH, HEIGHT);
@@ -284,7 +306,7 @@ class MiloTreatRushScene extends Phaser.Scene {
     this.clearLayer(this.hudRoot);
     this.clearTreats();
 
-    this.drawBackyard();
+    this.drawBackyard(this.screenRoot, "bg_day");
     this.addDogHouse(this.screenRoot, 276, 400, 0.78);
     this.addTreatBowl(this.screenRoot, 274, 500);
     this.addMenuMilo();
@@ -418,7 +440,11 @@ class MiloTreatRushScene extends Phaser.Scene {
   showChooseDog() {
     this.setMode("chooseDog");
     this.clearLayer(this.screenRoot);
-    this.drawBackyard();
+    this.drawBackyard(this.screenRoot, "bg_sunset");
+    const sheet = this.add.image(180, 335, "dog_selection_sheet");
+    sheet.setDisplaySize(308, 462);
+    sheet.setAlpha(0.16);
+    this.screenRoot.add(sheet);
     this.addHeader("CHOOSE DOG", () => this.showHome());
     DOGS.forEach((dog, index) => {
       const col = index % 2;
@@ -491,7 +517,7 @@ class MiloTreatRushScene extends Phaser.Scene {
     const isSpin = mode === "spinWheel";
     this.setMode(mode);
     this.clearLayer(this.screenRoot);
-    this.drawBackyard();
+    this.drawBackyard(this.screenRoot, isSpin ? "bg_night" : "bg_sunset");
     this.addHeader(isSpin ? "SPIN WHEEL" : "DAILY GIFT", () => this.showHome());
     this.screenRoot.add(this.createPanel(42, 144, 276, 310, 0x173455, 18, 0xffd16b));
     if (isSpin) {
@@ -517,7 +543,8 @@ class MiloTreatRushScene extends Phaser.Scene {
   showInfoScreen(mode, title, rows, activeNav = null) {
     this.setMode(mode);
     this.clearLayer(this.screenRoot);
-    this.drawBackyard();
+    const bgKey = mode === "world" ? "bg_sunset" : mode === "missions" ? "bg_day" : "bg_night";
+    this.drawBackyard(this.screenRoot, bgKey);
     this.addHeader(title, () => this.showHome());
     this.screenRoot.add(this.createPanel(24, 92, 312, 430, 0x173455, 18, 0xffd16b));
     rows.forEach((row, index) => {
@@ -565,7 +592,7 @@ class MiloTreatRushScene extends Phaser.Scene {
   }
 
   drawGameplayWorld() {
-    this.drawBackyard(this.worldRoot);
+    this.drawBackyard(this.worldRoot, "bg_day");
     this.addDogHouse(this.worldRoot, 296, 424, 0.58);
     this.addTreatBowl(this.worldRoot, 285, 526);
   }
@@ -934,6 +961,18 @@ class MiloTreatRushScene extends Phaser.Scene {
   }
 
   createDogContainer(x, y, scale, breed) {
+    const textureKey = DOG_TEXTURES[breed];
+    if (textureKey && this.textures.exists(textureKey)) {
+      const dog = this.add.container(x, y);
+      const shadow = this.add.ellipse(0, 50 * scale, 112 * scale, 24 * scale, 0x000000, 0.18);
+      const image = this.add.image(0, 0, textureKey);
+      image.setDisplaySize(image.width * ((142 * scale) / image.height), 142 * scale);
+      image.setOrigin(0.5, 0.62);
+      dog.add([shadow, image]);
+      dog.setData("assetDog", true);
+      return dog;
+    }
+
     const p = DOG_PALETTES[breed] || DOG_PALETTES["Golden Retriever"];
     const dog = this.add.container(x, y);
     const shadow = this.add.ellipse(0, 54, 116, 24, 0x000000, 0.18);
