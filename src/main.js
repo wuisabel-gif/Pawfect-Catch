@@ -109,7 +109,7 @@ class MiloTreatRushScene extends Phaser.Scene {
     this.load.image("bg_day", "asset/background1.png");
     this.load.image("bg_sunset", "asset/background_sunset.png");
     this.load.image("bg_night", "asset/background_night.png");
-    this.load.image("dog_golden", "asset/processed/golden_retriever_cutout.png");
+    this.load.image("dog_golden", "asset/processed/golden_retriever_v2_opaque.png");
     this.load.image("dog_shiba", "asset/processed/shiba_inu_cutout.png");
     this.load.image("dog_selection_sheet", "asset/dog selection portrait.png");
   }
